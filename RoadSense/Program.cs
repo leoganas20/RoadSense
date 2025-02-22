@@ -1,3 +1,5 @@
+using MudBlazor;
+using MudBlazor.Services;
 using RoadSense.Components;
 
 namespace RoadSense
@@ -10,7 +12,18 @@ namespace RoadSense
 
             // Add services to the container.
             builder.Services.AddRazorComponents();
+            builder.Services.AddMudServices(config =>
+            {
+                config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomLeft;
 
+                config.SnackbarConfiguration.PreventDuplicates = false;
+                config.SnackbarConfiguration.NewestOnTop = false;
+                config.SnackbarConfiguration.ShowCloseIcon = true;
+                config.SnackbarConfiguration.VisibleStateDuration = 10000;
+                config.SnackbarConfiguration.HideTransitionDuration = 500;
+                config.SnackbarConfiguration.ShowTransitionDuration = 500;
+                config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
+            });
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
