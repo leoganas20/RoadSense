@@ -24,6 +24,10 @@ namespace RoadSense
                 config.SnackbarConfiguration.ShowTransitionDuration = 500;
                 config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
             });
+            
+            builder.Services.AddRazorComponents()
+                .AddInteractiveServerComponents();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -39,7 +43,9 @@ namespace RoadSense
             app.UseAntiforgery();
 
             app.MapStaticAssets();
-            app.MapRazorComponents<App>();
+
+            app.MapRazorComponents<App>()
+                .AddInteractiveServerRenderMode();
 
             app.Run();
         }
