@@ -1,0 +1,57 @@
+﻿using Microsoft.AspNetCore.Components;
+using MudBlazor;
+
+namespace RoadSense.Components.Pages.LandingPage;
+
+public class LandingPageBase : ComponentBase
+{
+   
+
+    protected List<Service> Services = new()
+        {
+            new Service
+            {
+                Title = "Pediatricians",
+                Details = "Medical specialists focused on the care and treatment of infants, children, and adolescents.",
+                ImageSrc = "/images/Services/pedia-logo.svg"
+            },
+            new Service
+            {
+                Title = "Plastic Surgeons",
+                Details = "Specialists in reconstructive and aesthetic surgery to improve or restore appearance or function.",
+                ImageSrc = "/images/Services/plastic-surgeon.svg"
+            },
+            new Service
+            {
+                Title = "Ophthalmologists",
+                Details = "Medical doctors who specialize in the diagnosis, treatment, and surgery of eye-related conditions.",
+                ImageSrc = "/images/Services/ophthalmologist.svg"
+            },
+            new Service
+            {
+                Title = "Orthopedic",
+                Details = "Medical specialists in the diagnosis and treatment of musculoskeletal system disorders, including bones, joints, and muscles.",
+                ImageSrc = "/images/Services/Orthopedic.svg"
+            },
+            new Service
+            {
+                Title = "Gastroenterologist",
+                Details = "Specialists focused on diagnosing and treating conditions of the digestive system, including the stomach, intestines, and liver.",
+                ImageSrc = "/images/Services/Gastroenterologist.svg"
+            },
+            new Service
+            {
+                Title = "Cardiology",
+                Details = "Medical field specializing in diagnosing and treating heart conditions, including coronary artery disease, heart failure, and arrhythmias.",
+                ImageSrc = "/images/Services/Cardiology.svg"
+            },
+        };
+
+
+    public class Service
+    {
+        public string Title { get; set; }
+        public string Details { get; set; }
+        public string ImageSrc { get; set; }
+    }
+}
