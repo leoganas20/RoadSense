@@ -1,0 +1,6 @@
+@RoadSense.Api_HostAddress = http://localhost:5138
+
+GET {{RoadSense.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
