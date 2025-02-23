@@ -14,10 +14,10 @@
                 <ul class="links">
                     <li class="text-light">About Us</li>
                     <li class="text-light">Services</li>
-                    <li class="text-light" @onclick="@OpenDialogAsync">Login</li>
-                    <li class="book">Sign Up</li>
+                    <li class="text-light" @onclick="@(() => OpeForm("LOGIN"))">Login</li>
+                    <li class="book" @onclick="@(() => OpeForm("SIGN UP"))">Sign Up</li>
                     
-                    <MudBadge Content="100" Color="Color.Success" Overlap="true" Bordered="true">
+                   @*  <MudBadge Content="100" Color="Color.Success" Overlap="true" Bordered="true">
                         <MudAvatar Color="Color.Default" Variant="Variant.Text">
                             <MudMenu Style="z-index: 100" Icon="@Icons.Material.Filled.AccountCircle"
                                      Color="Color.Primary"
@@ -29,7 +29,7 @@
                                 <MudMenuItem>Logout</MudMenuItem>
                             </MudMenu>
                         </MudAvatar>
-                    </MudBadge>
+                    </MudBadge> *@
                 </ul>
             </div>
         </header>
@@ -111,10 +111,10 @@
  
 @code{
 
-    private Task OpenDialogAsync()
+    private Task OpeForm(string title)
     {
         var options = new DialogOptions { CloseOnEscapeKey = true };
 
-        return DialogService.ShowAsync<LoginDialog>("Login", options);
+        return DialogService.ShowAsync<LoginDialog>(title, options);
     }
 }
