@@ -1,6 +1,7 @@
 using MudBlazor;
 using MudBlazor.Services;
 using RoadSense.Components;
+using RoadSense.Services.User;
 
 namespace RoadSense
 {
@@ -27,6 +28,26 @@ namespace RoadSense
             
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents();
+
+            var env = builder.Environment;
+
+            // Set the API base URL depending on the environment
+            var apiBaseUrl = env.IsDevelopment()
+                ? "https://localhost:7002" // Development URL
+                :  " "; // Production URL
+
+            // Add HttpClient with the custom handler
+            builder.Services.AddScoped(sp => new HttpClient
+            {
+                BaseAddress = new Uri(apiBaseUrl)
+            });
+
+            builder.Services.AddAuthorizationCore();
+
+            builder.Services.AddAuthorization();
+
+
+            builder.Services.AddScoped<UserAuthService>();
 
             var app = builder.Build();
 

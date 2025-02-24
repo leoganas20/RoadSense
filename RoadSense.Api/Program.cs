@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using RoadSense.Api.Models;
+using RoadSense.Api.Services;
 
 namespace RoadSense.Api
 {
@@ -21,6 +23,9 @@ namespace RoadSense.Api
                           .AllowAnyHeader()
                           .AllowCredentials()); // Allow cookies & authentication headers if needed
             });
+
+            builder.Services.AddScoped<AuthService>();
+            builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 
             // Add Swagger
             builder.Services.AddEndpointsApiExplorer();

@@ -556,13 +556,13 @@ ul {
     position: absolute;
     inset: 0% 0% 0% auto;
 }
-
+/*
 .transition-bg-image.banner-cta {
     background-image: url('/images/doctors/medical-team.jpg');
     background-position: 50%;
     background-repeat: no-repeat;
     background-size: cover;
-}
+}*/
 
 .transition-bg-image {
     width: 100%;
@@ -616,14 +616,14 @@ ul {
         position: relative; /* Ensure it stays in flow */
     }
 
-    .transition-bg-image.banner-cta {
-        background-image: url('/images/doctors/medical-team.jpg'); /* Ensure path is correct */
-        background-size: cover; /* Cover container proportionally */
-        background-position: center; /* Center the image */
-        background-repeat: no-repeat; /* Prevent tiling */
-        width: 100%; /* Stretch to container width */
-        height: 100%; /* Stretch to container height */
-    }
+    /*.transition-bg-image.banner-cta {
+        background-image: url('/images/doctors/medical-team.jpg');*/ /* Ensure path is correct */
+        /*background-size: cover;*/ /* Cover container proportionally */
+        /*background-position: center;*/ /* Center the image */
+        /*background-repeat: no-repeat;*/ /* Prevent tiling */
+        /*width: 100%;*/ /* Stretch to container width */
+        /*height: 100%;*/ /* Stretch to container height */
+    /*}*/
 }
 
 .button-cs {
