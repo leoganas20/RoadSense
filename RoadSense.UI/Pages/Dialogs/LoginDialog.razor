@@ -151,13 +151,14 @@
 
     private async Task Register(UserLogin user)
     {
+        
         await Form.Validate();
 
         if (!IsSuccess)
             return;
 
         IsLogin = true;
-        var result = await UserService.RegisterAsync(user);
+        var result = await UserService.RegisterAsync(User);
 
         try
         {
