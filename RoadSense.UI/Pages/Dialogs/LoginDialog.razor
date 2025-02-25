@@ -24,18 +24,18 @@
                                     if (MudDialog.Title == "LOGIN")
                                     {
                                         <MudTextField Label="Username" HelperText="Enter username"
-                                                      @bind-Value="User.UserName" For="@(() => User.UserName)" />
+                                        @bind-Value="User.UserName" For="@(() => User.UserName)" />
                                         <MudTextField Label="Password" HelperText="Enter password" Class="mt-3"
-                                                      @bind-Value="User.Password" For="@(() => User.Password)" InputType="InputType.Password" />
+                                        @bind-Value="User.Password" For="@(() => User.Password)" InputType="InputType.Password" />
                                     }
                                     else
                                     {
                                         <MudTextField Label="Username" HelperText="Max. 8 characters"
-                                                      @bind-Value="User.UserName" For="@(() => User.UserName)" />
+                                        @bind-Value="User.UserName" For="@(() => User.UserName)" />
                                         <MudTextField Label="Email" Class="mt-3"
-                                                      @bind-Value="User.Email" For="@(() => User.Email)" />
+                                        @bind-Value="User.Email" For="@(() => User.Email)" />
                                         <MudTextField Label="Password" HelperText="Choose a strong password" Class="mt-3"
-                                                      @bind-Value="User.Password" For="@(() => User.Password)" InputType="InputType.Password" />
+                                        @bind-Value="User.Password" For="@(() => User.Password)" InputType="InputType.Password" />
                                     }
                                 }
 
@@ -44,6 +44,7 @@
                                 @{
                                     if (MudDialog.Title == "LOGIN")
                                     {
+                                        <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@(() => BackToLogin("SIGN UP"))">I don't have account</MudButton>
                                         <MudSpacer />
                                         <MudButton Disabled="@IsLogin" OnClick="@(() => Login(User.UserName,  User.Password))" Variant="Variant.Filled" Color="Color.Primary">
                                             @if (IsLogin)
@@ -60,7 +61,18 @@
                                     else
                                     {
                                         <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@(() => BackToLogin("LOGIN"))">I have account already</MudButton>
-                                        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Secondary" Class="ml-auto">Register</MudButton>
+                                        <MudSpacer />
+                                        <MudButton Disabled="@IsLogin" OnClick="@(() => Register(User))" Variant="Variant.Filled" Color="Color.Secondary">
+                                            @if (IsLogin)
+                                            {
+                                                <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                                                <MudText Class="ms-2">Processing</MudText>
+                                            }
+                                            else
+                                            {
+                                                <MudText>Register</MudText>
+                                            }
+                                        </MudButton>
                                     }
                                 }
                             </MudCardActions>
@@ -129,10 +141,36 @@
         {
             Snackbar.Add($"{ex.Message}", Severity.Error);
         }
-         
+
 
         IsLogin = false;
 
         return;
+    }
+
+    private async Task Register(UserLogin user)
+    {
+        await Form.Validate();
+
+        if (!IsSuccess)
+            return;
+
+        IsLogin = true;
+        var result = await UserService.RegisterAsync(user);
+
+        try
+        {
+            if (result.IsSuccessStatusCode)
+            {
+                Snackbar.Add("Register successful!", Severity.Success);
+                await BackToLogin("LOGIN");
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"{ex.Message}", Severity.Error);
+        }
+
+        IsLogin = false;
     }
 }
