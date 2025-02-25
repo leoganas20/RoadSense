@@ -6,6 +6,8 @@ using MudBlazor;
 using MudBlazor.Services;
 using RoadSense.UI.Services.AuthProvider;
 using RoadSense.UI.Services.User;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace RoadSense.UI
 {
@@ -18,16 +20,13 @@ namespace RoadSense.UI
             builder.RootComponents.Add<App>("#app");
             builder.RootComponents.Add<HeadOutlet>("head::after");
 
-            // Set the API base URL depending on the environment
+            // Set the API base URL
             var apiBaseUrl = builder.HostEnvironment.IsDevelopment()
-                ? "https://localhost:7002" // Development URL
-                : "https://your-production-api.com"; // Production URL
+                ? "https://localhost:7002"
+                : "https://your-production-api.com";
 
             // Add HttpClient with the base address
-            builder.Services.AddScoped(sp => new HttpClient
-            {
-                BaseAddress = new Uri(apiBaseUrl)
-            });
+            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(apiBaseUrl) });
 
             // Add MudBlazor services
             builder.Services.AddMudServices(config =>
@@ -52,6 +51,7 @@ namespace RoadSense.UI
             // Add User Authentication Service
             builder.Services.AddScoped<UserAuthService>();
 
+            // Ensure all async tasks are awaited
             await builder.Build().RunAsync();
         }
     }

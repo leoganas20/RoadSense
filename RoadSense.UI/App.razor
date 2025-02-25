@@ -6,12 +6,13 @@
                 <NotAuthorized>
                     @if (context.User.Identity.IsAuthenticated)
                     {
-                        <p>You are not authorized to view this page.</p>
+                      @*   <p>You are not authorized to view this page.</p> *@
+                        <RedirectorToHomePage />
                     }
                     else
                     {
-                        <p>You are not logged in. Redirecting to login...</p>
-                        <RedirectorToHomePage />
+                       @*  <p>You are not logged in. Redirecting to login...</p> *@
+                        <_404 />
                     }
                 </NotAuthorized>
             </AuthorizeRouteView>

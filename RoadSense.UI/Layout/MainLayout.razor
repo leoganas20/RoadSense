@@ -1,7 +1,8 @@
 ﻿@using Microsoft.AspNetCore.Components.Authorization
 @using RoadSense.UI.Services.User
+@using System.Security.Claims
 @inherits LayoutComponentBase
- 
+
 @inject AuthenticationStateProvider AuthStateProvider
 @inject NavigationManager NavManager
 @inject UserAuthService AuthService
@@ -19,7 +20,51 @@
 <AuthorizeView>
     <Authorized>
         @{
-            NavManager.NavigateTo("/dashboard");
+            <MudLayout>
+                <MudAppBar Elevation="1" Style="background-color: #061729;">
+                    <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+                    <MudText Typo="Typo.h6">
+                        Welcome @(user.Claims.FirstOrDefault(x => x.Type == "unique_name")?.Value ?? "Guest")!
+                    </MudText>
+
+                    <MudSpacer />
+                    <MudBadge Color="Color.Success" Overlap="true" Bordered="true">
+                        <MudAvatar>
+                            <MudImage Src="images/avatar.jpg" />
+                        </MudAvatar>
+                    </MudBadge>
+                </MudAppBar>
+                <MudDrawer @bind-Open="_drawerOpen" Elevation="2" Style="background-color: #001c38;">
+                    <MudDrawerHeader>
+                        <div style="display: flex; justify-content: center; align-items: center; width: 100%;">
+                            <img src="/images/Roadsensor_ICON.png" style="object-fit: contain;" width="100" />
+                        </div>
+                    </MudDrawerHeader>
+                    <MudNavMenu Color="Color.Primary">
+                        <MudNavLink Style="color: white" Href="/dashboard" Icon="@Icons.Material.Filled.Dashboard" IconColor="Color.Tertiary">Dashboard</MudNavLink>
+
+                        <MudNavGroup Style="color: white" Title="Violations" Expanded="true">
+                            <MudNavLink Style="color: white" Href="/users">Live Camera</MudNavLink>
+                            <MudNavLink Style="color: white" Href="/security">Reports</MudNavLink>
+                        </MudNavGroup>
+                        <MudNavGroup Style="color: white" Title="Maintenance" Expanded="true">
+                            <MudNavLink Style="color: white" Href="/users">Violation list</MudNavLink>
+                            <MudNavLink Style="color: white" Href="/security">User list</MudNavLink>
+                        </MudNavGroup>
+                        <MudNavLink Style="color: white; margin-top: 20px" Icon="@Icons.Material.Filled.Logout" OnClick="Logout">Logout</MudNavLink>
+                    </MudNavMenu>
+                </MudDrawer>
+                <MudMainContent>
+                    <div class="page">
+                        <main>
+                            <article class="content p-3">
+                                @Body
+                            </article>
+                        </main>
+
+                    </div>
+                </MudMainContent>
+            </MudLayout>
         }
     </Authorized>
     <NotAuthorized>
@@ -29,7 +74,7 @@
                     @Body
                 </article>
             </main>
-        </div>
+        </div> 
     </NotAuthorized>
 </AuthorizeView>
 
@@ -40,9 +85,27 @@
 </div>
 
 @code {
+
+    [CascadingParameter] private Task<AuthenticationState> AuthStateTask { get; set; }
+
+    private ClaimsPrincipal user = new();
+
     private async Task Logout()
     {
         await AuthService.LogoutAsync();
         NavManager.NavigateTo("/", forceLoad: true);
+    }
+
+    bool _drawerOpen = true;
+
+    void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateTask;
+        user = authState.User;
     }
 }

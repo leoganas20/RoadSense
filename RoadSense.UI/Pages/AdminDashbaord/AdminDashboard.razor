@@ -1,43 +1,75 @@
 ﻿@page "/dashboard"
+@using Microsoft.AspNetCore.Authorization
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager NavManager
+@attribute [Authorize]
 
-<MudLayout>
-    <MudAppBar Elevation="1">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
-            <MudText Typo="Typo.h6">Welcome User!</MudText>
-        <MudSpacer />
-        <MudBadge Color="Color.Success" Overlap="true" Bordered="true">
-            <MudAvatar>
-                <MudImage Src="images/avatar.jpg" />
-            </MudAvatar>
-        </MudBadge>
-    </MudAppBar>
-    <MudDrawer @bind-Open="_drawerOpen" Elevation="2" Style="background-color: #001c38;">
-        <MudDrawerHeader>
-           
-            <div class="d-flex justify-content-center">
-                <img src="/images/Roadsensor_ICON.png" style="object-fit: contain;" width="100" />
-            </div>
-        </MudDrawerHeader>
-        <MudNavMenu Color="Color.Primary">
-            <MudNavLink Style="color: white" Href="/dashboard" Icon="@Icons.Material.Filled.Dashboard">Dashboard</MudNavLink>
-            <MudNavLink Style="color: white" Href="/components/navmenu" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Storage">Servers</MudNavLink>
-           
-            <MudNavGroup Style="color: white" Title="Settings" Expanded="true">
-                <MudNavLink Style="color: white" Href="/users">Users</MudNavLink>
-                <MudNavLink Style="color: white" Href="/security">Security</MudNavLink>
-            </MudNavGroup>
-            <MudNavLink Style="color: white" Href="/about">About</MudNavLink>
-        </MudNavMenu>
-    </MudDrawer>
-    <MudMainContent>
-        @*Body*@
-    </MudMainContent>
-</MudLayout>
+
+<MudGrid>
+    @foreach (var item in dashboardList)
+    {
+        <MudItem xs="12" sm="4" lg="4">
+            <MudCard>
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.h6">@item.Title</MudText>
+                    </CardHeaderContent>
+                  @*   <CardHeaderActions>
+                        <MudIconButton Icon="@Icons.Material.Filled.Settings" Color="Color.Default" />
+                    </CardHeaderActions> *@
+                </MudCardHeader>
+                <MudCardContent>
+                   
+                    <div class="d-flex justify-content-start p-3">
+                        <div class="text-start">
+                            <img src="@item.Icon" style="object-fit: contain;" width="80" />
+                        </div>
+                        <div class="text-start">
+                            <MudText Typo="Typo.h3" Style="font-size: 80px; margin-left: 20px;">@item.Total</MudText>
+                        </div>
+                    </div>
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton Variant="Variant.Text" Color="Color.Primary">View</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+    }
+    
+</MudGrid>
+
+
 @code {
     bool _drawerOpen = true;
 
+    private List<DashboardModel> dashboardList = new();
     void DrawerToggle()
     {
         _drawerOpen = !_drawerOpen;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        dashboardList.AddRange(new List<DashboardModel>
+        {
+            new() { Title = "Today's Violations", Total = 3, Icon = "/images/calendar_icon.png" },
+            new() { Title = "Total Driver's Listed", Total = 5, Icon = "/images/drivers_license_icon.png" },
+            new() { Title = "Total Traffic Violations", Total = 7, Icon = "/images/traffic_icon.png" }
+        });
+
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (!user.Identity.IsAuthenticated)
+        {
+            NavManager.NavigateTo("/");
+        }
+    }
+
+    private class DashboardModel
+    {
+        public string Title { get; set; }
+        public int Total { get; set; }
+        public string Icon { get; set; }
     }
 }

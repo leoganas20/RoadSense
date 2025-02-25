@@ -1,0 +1,33 @@
+﻿@page "/Identity"
+
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Authorization
+@inject NavigationManager NavManager
+@attribute [Authorize]
+<h3>User Details</h3>
+ 
+<h4>Claims:</h4>
+<ul>
+    @foreach (var claim in user.Claims)
+    {
+        <li>@claim.Type: @claim.Value</li>
+    }
+</ul>
+
+@code {
+    [CascadingParameter] private Task<AuthenticationState> AuthStateTask { get; set; }
+
+    private ClaimsPrincipal user;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateTask;
+        user = authState.User;
+
+        if (!user.Identity.IsAuthenticated)
+        {
+            Console.WriteLine("User not authenticated, redirecting...");
+            NavManager.NavigateTo("/login", forceLoad: true);
+        }
+    }
+}
