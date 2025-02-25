@@ -107,5 +107,9 @@
     {
         var authState = await AuthStateTask;
         user = authState.User;
+
+        if(user.Identity.IsAuthenticated){
+            NavManager.NavigateTo("/dashboard");
+        }
     }
 }

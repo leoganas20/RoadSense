@@ -32,7 +32,7 @@ namespace RoadSense.API.Controllers
             }
 
             user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password, workFactor: 12);
-
+            user.UserId = Guid.NewGuid().ToString();
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
             return Ok(new { Message = "User registered successfully!" });
@@ -44,14 +44,14 @@ namespace RoadSense.API.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest loginRequest)
         {
-            var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.UserName == loginRequest.Username);
+            var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == loginRequest.Email);
 
             if (existingUser == null || !BCrypt.Net.BCrypt.Verify(loginRequest.Password, existingUser.Password))
             {
                 return Unauthorized("Invalid credentials.");
             }
 
-            var token = _authService.GenerateJwtToken(existingUser.UserName, existingUser.Role);
+            var token = _authService.GenerateJwtToken(existingUser.Email, existingUser.Role);
 
             return Ok(new { Token = token });
         }
@@ -59,7 +59,7 @@ namespace RoadSense.API.Controllers
 
     public class LoginRequest
     {
-        public string Username { get; set; }
+        public string Email { get; set; }
         public string Password { get; set; }
     }
 }

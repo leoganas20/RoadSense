@@ -23,16 +23,16 @@
                                 @{
                                     if (MudDialog.Title == "LOGIN")
                                     {
-                                        <MudTextField Label="Username" HelperText="Enter username"
-                                        @bind-Value="User.UserName" For="@(() => User.UserName)" />
+                                        <MudTextField Label="Email" HelperText="Enter Email"
+                                                      @bind-Value="User.Email" For="@(() => User.Email)" />
                                         <MudTextField Label="Password" HelperText="Enter password" Class="mt-3"
                                         @bind-Value="User.Password" For="@(() => User.Password)" InputType="InputType.Password" />
                                     }
                                     else
                                     {
-                                        
+
                                         <MudTextField Label="Username" HelperText="Enter username"
-                                        @bind-Value="User.UserName" For="@(() => User.UserName)" />
+                                        @bind-Value="User.UserName" For="@(() => User.UserName)" /> 
                                         <MudTextField Label="Email" Class="mt-3"
                                         @bind-Value="User.Email" For="@(() => User.Email)" />
                                         <MudTextField Label="Password" HelperText="Choose a strong password" Class="mt-3"
@@ -47,7 +47,7 @@
                                     {
                                         <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@(() => BackToLogin("SIGN UP"))">I don't have account</MudButton>
                                         <MudSpacer />
-                                        <MudButton Disabled="@IsLogin" OnClick="@(() => Login(User.UserName,  User.Password))" Variant="Variant.Filled" Color="Color.Primary">
+                                        <MudButton Disabled="@IsLogin" OnClick="@(() => Login(User.Email,  User.Password))" Variant="Variant.Filled" Color="Color.Primary">
                                             @if (IsLogin)
                                             {
                                                 <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
@@ -119,7 +119,7 @@
         return DialogService.ShowAsync<LoginDialog>(title, options);
     }
 
-    private async Task Login(string username, string password)
+    private async Task Login(string email, string password)
     {
 
         await Form.Validate();
@@ -129,7 +129,7 @@
 
         IsLogin = true;
 
-        var result = await UserService.LoginAsync(username, password);
+        var result = await UserService.LoginAsync(email, password);
         try
         {
             if (result.IsSuccessStatusCode)
@@ -151,13 +151,17 @@
 
     private async Task Register(UserLogin user)
     {
-        
+
         await Form.Validate();
 
         if (!IsSuccess)
             return;
 
         IsLogin = true;
+
+        //temprary default superadmin
+        User.Role = "SuperAdmin";
+        User.PhoneNumber = "09";
         var result = await UserService.RegisterAsync(User);
 
         try
