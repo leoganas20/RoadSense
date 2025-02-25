@@ -1,0 +1,48 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@using RoadSense.UI.Services.User
+@inherits LayoutComponentBase
+ 
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager NavManager
+@inject UserAuthService AuthService
+
+@* Required *@
+<MudThemeProvider />
+<MudPopoverProvider />
+
+@* Needed for dialogs *@
+<MudDialogProvider />
+
+@* Needed for snackbars *@
+<MudSnackbarProvider />
+
+<AuthorizeView>
+    <Authorized>
+        @{
+            NavManager.NavigateTo("/dashboard");
+        }
+    </Authorized>
+    <NotAuthorized>
+        <div class="page">
+            <main>
+                <article class="content p-0">
+                    @Body
+                </article>
+            </main>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
+
+<div id="blazor-error-ui" data-nosnippet>
+    An unhandled error has occurred.
+    <a href="." class="reload">Reload</a>
+    <span class="dismiss">🗙</span>
+</div>
+
+@code {
+    private async Task Logout()
+    {
+        await AuthService.LogoutAsync();
+        NavManager.NavigateTo("/", forceLoad: true);
+    }
+}

@@ -1,0 +1,134 @@
+﻿@using System.ComponentModel.DataAnnotations
+@using RoadSense.Web.Components.Pages.Common.Models
+@using RoadSense.Web.Services.User 
+
+@inject IDialogService DialogService
+@inject UserAuthService UserService
+@inject ISnackbar Snackbar
+
+<MudDialog>
+    <TitleContent>
+        <div class="d-flex justify-content-center mt-3">
+            <h4>@MudDialog.Title</h4>
+        </div>
+    </TitleContent>
+    <DialogContent>
+        <EditForm Model="@User" OnValidSubmit="OnValidSubmit">
+            <DataAnnotationsValidator />
+            <MudGrid>
+                <MudItem xs="12" sm="12">
+                    <MudCard Elevation="0" Style="width: 400px">
+                        <MudCardContent>
+                            @{
+                                if (MudDialog.Title == "LOGIN")
+                                {
+                                    <MudTextField Label="Username" HelperText="Enter username"
+                                    @bind-Value="User.UserName" For="@(() => User.UserName)" />
+                                    <MudTextField Label="Password" HelperText="Enter password" Class="mt-3"
+                                    @bind-Value="User.Password" For="@(() => User.Password)" InputType="InputType.Password" />
+                                }
+                                else
+                                {
+                                    <MudTextField Label="Username" HelperText="Max. 8 characters"
+                                    @bind-Value="User.UserName" For="@(() => User.UserName)" />
+                                    <MudTextField Label="Email" Class="mt-3"
+                                    @bind-Value="User.Email" For="@(() => User.Email)" />
+                                    <MudTextField Label="Password" HelperText="Choose a strong password" Class="mt-3"
+                                    @bind-Value="User.Password" For="@(() => User.Password)" InputType="InputType.Password" />
+                                }
+                            }
+
+                        </MudCardContent>
+                        <MudCardActions>
+                            @{
+                                if (MudDialog.Title == "LOGIN")
+                                {
+                                    <MudSpacer />
+                                    <MudButton Disabled="@IsLogin" OnClick="@(() => Login(User.UserName,  User.Password))" Variant="Variant.Filled" Color="Color.Primary">
+                                        @if (IsLogin)
+                                        {
+                                            <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                                            <MudText Class="ms-2">Processing</MudText>
+                                        }
+                                        else
+                                        {
+                                            <MudText>Login</MudText>
+                                        }
+                                    </MudButton>
+                                }
+                                else
+                                {
+                                    <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@(() => BackToLogin("LOGIN"))">I have account already</MudButton>
+                                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Secondary" Class="ml-auto">Register</MudButton>
+                                }
+                            }
+                        </MudCardActions>
+                    </MudCard>
+                </MudItem>
+            </MudGrid>
+        </EditForm>
+    </DialogContent>
+    <DialogActions>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    protected UserLogin User = new UserLogin();
+    [Inject] NavigationManager NavManager { get; set; }
+    protected bool IsSuccess = false;
+
+    private bool IsLogin = false;
+
+    private void OnValidSubmit(EditContext context)
+    {
+        IsSuccess = true;
+        StateHasChanged();
+    }
+
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; }
+
+    private void Submit() => MudDialog.Close(DialogResult.Ok(true));
+
+    private void Cancel() => MudDialog.Cancel();
+
+
+    private Task BackToLogin(string title)
+    {
+        this.MudDialog.Close();
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+
+        return DialogService.ShowAsync<LoginDialog>(title, options);
+    }
+
+    private async Task Login(string username, string password){
+
+        OnValidSubmit();
+
+        if (!IsSuccess)
+            return;
+
+
+        IsLogin = true;
+
+        var result = await UserService.LoginAsync(username, password);
+
+        try
+        {
+            if (result.IsSuccessStatusCode)
+            {
+                Snackbar.Add("Login successful!", Severity.Success);
+                NavManager.NavigateTo("/", forceLoad: true);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"{ex.Message}", Severity.Error);
+            
+        }
+
+        IsLogin = false;
+
+        return;
+    }
+}

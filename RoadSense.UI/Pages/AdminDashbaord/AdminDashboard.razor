@@ -1,0 +1,43 @@
+﻿@page "/dashboard"
+
+<MudLayout>
+    <MudAppBar Elevation="1">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+            <MudText Typo="Typo.h6">Welcome User!</MudText>
+        <MudSpacer />
+        <MudBadge Color="Color.Success" Overlap="true" Bordered="true">
+            <MudAvatar>
+                <MudImage Src="images/avatar.jpg" />
+            </MudAvatar>
+        </MudBadge>
+    </MudAppBar>
+    <MudDrawer @bind-Open="_drawerOpen" Elevation="2" Style="background-color: #001c38;">
+        <MudDrawerHeader>
+           
+            <div class="d-flex justify-content-center">
+                <img src="/images/Roadsensor_ICON.png" style="object-fit: contain;" width="100" />
+            </div>
+        </MudDrawerHeader>
+        <MudNavMenu Color="Color.Primary">
+            <MudNavLink Style="color: white" Href="/dashboard" Icon="@Icons.Material.Filled.Dashboard">Dashboard</MudNavLink>
+            <MudNavLink Style="color: white" Href="/components/navmenu" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Storage">Servers</MudNavLink>
+           
+            <MudNavGroup Style="color: white" Title="Settings" Expanded="true">
+                <MudNavLink Style="color: white" Href="/users">Users</MudNavLink>
+                <MudNavLink Style="color: white" Href="/security">Security</MudNavLink>
+            </MudNavGroup>
+            <MudNavLink Style="color: white" Href="/about">About</MudNavLink>
+        </MudNavMenu>
+    </MudDrawer>
+    <MudMainContent>
+        @*Body*@
+    </MudMainContent>
+</MudLayout>
+@code {
+    bool _drawerOpen = true;
+
+    void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+}

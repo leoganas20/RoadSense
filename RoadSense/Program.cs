@@ -1,74 +1,60 @@
+using Blazored.LocalStorage;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor;
 using MudBlazor.Services;
 using RoadSense.Components;
+using RoadSense.Services.AuthProvider;
 using RoadSense.Services.User;
+using System;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace RoadSense
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            var builder = WebApplication.CreateBuilder(args);
+            var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
-            // Add services to the container.
-            builder.Services.AddRazorComponents();
-            builder.Services.AddMudServices(config =>
-            {
-                config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomLeft;
-
-                config.SnackbarConfiguration.PreventDuplicates = false;
-                config.SnackbarConfiguration.NewestOnTop = false;
-                config.SnackbarConfiguration.ShowCloseIcon = true;
-                config.SnackbarConfiguration.VisibleStateDuration = 10000;
-                config.SnackbarConfiguration.HideTransitionDuration = 500;
-                config.SnackbarConfiguration.ShowTransitionDuration = 500;
-                config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
-            });
-            
-            builder.Services.AddRazorComponents()
-                .AddInteractiveServerComponents();
-
-            var env = builder.Environment;
+            builder.RootComponents.Add<App>("#app");
 
             // Set the API base URL depending on the environment
-            var apiBaseUrl = env.IsDevelopment()
+            var apiBaseUrl = builder.HostEnvironment.IsDevelopment()
                 ? "https://localhost:7002" // Development URL
-                :  " "; // Production URL
+                : "https://your-production-api.com"; // Production URL
 
-            // Add HttpClient with the custom handler
+            // Add HttpClient with the base address
             builder.Services.AddScoped(sp => new HttpClient
             {
                 BaseAddress = new Uri(apiBaseUrl)
             });
 
+            // Add MudBlazor services
+            builder.Services.AddMudServices(config =>
+            {
+                config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.TopRight;
+                config.SnackbarConfiguration.PreventDuplicates = false;
+                config.SnackbarConfiguration.NewestOnTop = false;
+                config.SnackbarConfiguration.ShowCloseIcon = true;
+                config.SnackbarConfiguration.VisibleStateDuration = 800;
+                config.SnackbarConfiguration.HideTransitionDuration = 500;
+                config.SnackbarConfiguration.ShowTransitionDuration = 500;
+                config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
+            });
+
+            // Add Blazored Local Storage
+            builder.Services.AddBlazoredLocalStorage();
+
+            // Add Authentication
             builder.Services.AddAuthorizationCore();
+            builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
 
-            builder.Services.AddAuthorization();
-
-
+            // Add User Authentication Service
             builder.Services.AddScoped<UserAuthService>();
 
-            var app = builder.Build();
-
-            // Configure the HTTP request pipeline.
-            if (!app.Environment.IsDevelopment())
-            {
-                app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
-
-            app.UseHttpsRedirection();
-
-            app.UseAntiforgery();
-
-            app.MapStaticAssets();
-
-            app.MapRazorComponents<App>()
-                .AddInteractiveServerRenderMode();
-
-            app.Run();
+            await builder.Build().RunAsync();
         }
     }
 }

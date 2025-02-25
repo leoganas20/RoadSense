@@ -2,7 +2,7 @@
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using Microsoft.JSInterop;
+using Blazored.LocalStorage;
 using RoadSense.Components.Pages.Common.Models;
 
 namespace RoadSense.Services.User
@@ -10,11 +10,12 @@ namespace RoadSense.Services.User
     public class UserAuthService
     {
         private readonly HttpClient _httpClient;
-        private readonly IJSRuntime _jsRuntime;
-        public UserAuthService(HttpClient httpClient, IJSRuntime jsRuntime)
+        private readonly ILocalStorageService _localStorage;
+
+        public UserAuthService(HttpClient httpClient, ILocalStorageService localStorage)
         {
             _httpClient = httpClient;
-            _jsRuntime = jsRuntime;
+            _localStorage = localStorage;
         }
 
         /// <summary>
@@ -28,25 +29,27 @@ namespace RoadSense.Services.User
         /// <summary>
         /// Logs in a user.
         /// </summary>
-        public async Task<bool> LoginAsync(string username, string password)
+        public async Task<HttpResponseMessage> LoginAsync(string username, string password)
         {
             var response = await _httpClient.PostAsJsonAsync("api/auth/login", new { username, password });
 
             if (!response.IsSuccessStatusCode)
-                return false;
+                return response;
 
             var result = await response.Content.ReadFromJsonAsync<LoginResponse>();
 
-            await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "authToken", result.Token);
+            // Store token in local storage
+            await _localStorage.SetItemAsync("authToken", result.Token);
 
+            // Set Authorization header
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", result.Token);
 
-            return true;
+            return response;
         }
 
         public async Task LogoutAsync()
         {
-            await _jsRuntime.InvokeVoidAsync("localStorage.removeItem", "authToken");
+            await _localStorage.RemoveItemAsync("authToken");
             _httpClient.DefaultRequestHeaders.Authorization = null;
         }
     }

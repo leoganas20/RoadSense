@@ -18,7 +18,7 @@ namespace RoadSense.Api
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowBlazor", policy =>
-                    policy.WithOrigins("https://localhost:7185", "https://localhost:7002")
+                    policy.WithOrigins("https://localhost:7186", "https://localhost:7002")
                           .AllowAnyMethod()
                           .AllowAnyHeader()
                           .AllowCredentials()); // Allow cookies & authentication headers if needed
