@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RoadSense.Api;
 using RoadSense.Api.Models;
@@ -48,7 +49,7 @@ namespace RoadSense.API.Controllers
 
             if (existingUser == null || !BCrypt.Net.BCrypt.Verify(loginRequest.Password, existingUser.Password))
             {
-                return Unauthorized("Invalid credentials.");
+                return NotFound("User not found!");
             }
 
             var token = _authService.GenerateJwtToken(existingUser.Email, existingUser.Role);

@@ -136,6 +136,9 @@
             {
                 Snackbar.Add("Login successful!", Severity.Success);
                 NavManager.NavigateTo("/dashboard", forceLoad: true);
+            }else{
+                var errorMessage = await result.Content.ReadAsStringAsync();
+                Snackbar.Add(errorMessage, Severity.Error);
             }
         }
         catch (Exception ex)
@@ -170,6 +173,11 @@
             {
                 Snackbar.Add("Register successful!", Severity.Success);
                 await BackToLogin("LOGIN");
+            }
+            else
+            {
+                var errorMessage = await result.Content.ReadAsStringAsync();
+                Snackbar.Add(errorMessage, Severity.Error);
             }
         }
         catch (Exception ex)
