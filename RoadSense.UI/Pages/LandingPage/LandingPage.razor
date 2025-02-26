@@ -1,6 +1,7 @@
 ﻿@page "/"
 @using RoadSense.UI.Pages.Dialogs
 @using RoadSense.UI.Pages.LandingPage
+@using System.Security.Claims
 
 @inherits LandingPageBase
 @inject IDialogService DialogService
@@ -58,8 +59,8 @@
             <div class="row align-items-start">
                 <div class="col-md-6 text-center">
                     <img src="/images/plate-rec.png"
-                         alt="About Us"
-                         class="img-fluid" />
+                    alt="About Us"
+                    class="img-fluid" />
                 </div>
                 <div class="col-md-6">
                     <div class="subheading">About Us</div>
@@ -119,10 +120,25 @@
 
 @code {
 
+    [CascadingParameter] private Task<AuthenticationState> AuthStateTask { get; set; }
+    [Inject] NavigationManager NavManager { get; set; }
+
+    private ClaimsPrincipal user = new();
+
     private Task OpeForm(string title)
     {
         var options = new DialogOptions { CloseOnEscapeKey = true };
 
         return DialogService.ShowAsync<LoginDialog>(title, options);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateTask;
+        user = authState.User;
+
+        if(user.Identity.IsAuthenticated){
+            NavManager.NavigateTo("/dashboard");
+        }
     }
 }
