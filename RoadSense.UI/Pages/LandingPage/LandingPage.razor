@@ -18,8 +18,8 @@
                     <li class="text-light">Services</li>
                     <li class="text-light" @onclick="@(() => OpeForm("LOGIN"))">Login</li>
                     <li class="book" @onclick="@(() => OpeForm("SIGN UP"))">Sign Up</li>
-                    
-                   @*  <MudBadge Content="100" Color="Color.Success" Overlap="true" Bordered="true">
+
+                    @*  <MudBadge Content="100" Color="Color.Success" Overlap="true" Bordered="true">
                         <MudAvatar Color="Color.Default" Variant="Variant.Text">
                             <MudMenu Style="z-index: 100" Icon="@Icons.Material.Filled.AccountCircle"
                                      Color="Color.Primary"
@@ -40,13 +40,13 @@
         <div class="hero-section">
             <div class="container">
                 <div class="info">
-                    <h1><span class="text-light">Road</span> <span class="text-danger">Sense</span></h1>
+                    <h1><span class="text-light">Road</span><span class="text-danger">Sense</span></h1>
                     <p class="text-light">Monitor, Detect and Respond to Traffic Violations in Real Time.</p>
                     <button class="signup">
-                      @*   <span class="mr-2">
+                        @*   <span class="mr-2">
                             <img src="/images/icons8-playstore-48.png" alt="Play Store" />
                         </span> *@
-                       Sign up
+                        Sign up
                     </button>
                 </div>
             </div>
@@ -64,16 +64,17 @@
                 <div class="col-md-6">
                     <div class="subheading">About Us</div>
 
-                    <h2>Road sense is for detecting !ksksksksk</h2>
+                    <h2>RoadSense Team</h2>
                     <p>
-                        We are a team of dedicated professionals providing top-quality
-                        healthcare services. Our commitment is to ensure every patient
-                        receives exceptional care.
+                        We are a team of dedicated innovators committed to enhancing road safety
+                        through real-time traffic monitoring. Our goal is to reduce overspeeding
+                        and unnecessary honking, ensuring a safer environment for school zones.
                     </p>
                     <p>
-                        With state-of-the-art technology and experienced staff, we
-                        continually strive for excellence in medical care and patient
-                        satisfaction.
+                        With state-of-the-art technology, including YOLOv8 for license plate
+                        recognition, speed detection, and honk violation monitoring, we strive for
+                        excellence in traffic regulation and public safety. At RoadSense, we believe
+                        in using smart technology to promote responsible driving and protect communities.
                     </p>
                     <a href="#more" class="learn-more">Learn more <MudIcon Icon="@Icons.Material.Filled.ArrowRightAlt" Color="Color.Primary"></MudIcon></a>
                 </div>
@@ -81,7 +82,7 @@
         </div>
     </section>
 
-    <h1 class="my-5 service-text">Our Services</h1>
+    <h1 class="my-5 service-text">Our Features</h1>
     <section id="service-gallery" class="service-gallery">
         <div class="container">
             <MudGrid Justify="Justify.Center" Style="min-height: 100vh; display: flex; flex-wrap: wrap;  margin-top: 50px;">
@@ -95,9 +96,6 @@
                                     <MudText Class="fw-bolder" Typo="Typo.h5" Style="font-family: 'Poppins', sans-serif !important;">@item.Title</MudText>
                                     <MudText Class="mt-4" Typo="Typo.body2" Style="font-family: 'Poppins', sans-serif !important;">@item.Details</MudText>
                                 </MudCardContent>
-                                <MudCardActions>
-                                    <MudButton Variant="Variant.Text" Color="Color.Primary" Style="font-family: 'Poppins', sans-serif !important; font-weight: bold">Book Appointment</MudButton>
-                                </MudCardActions>
                             </MudCard>
                         </div>
                     </MudItem>
@@ -105,7 +103,7 @@
             </MudGrid>
         </div>
     </section>
-  
+
     <section class="all-rights">
         <div class="container">
             <div class="d-flex justify-content-center">
@@ -115,12 +113,11 @@
             </div>
         </div>
     </section>
-
 </div>
 
- 
- 
-@code{
+
+
+@code {
 
     private Task OpeForm(string title)
     {
