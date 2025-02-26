@@ -30,7 +30,7 @@
                     <MudSpacer />
                     <MudBadge Color="Color.Success" Overlap="true" Bordered="true">
                         <MudAvatar>
-                            <MudImage Src="images/avatar.jpg" />
+                            <MudImage Src="images/avatar.jpg" Width="80"/>
                         </MudAvatar>
                     </MudBadge>
                 </MudAppBar>
@@ -40,7 +40,7 @@
                             <img src="/images/Roadsensor_ICON.png" style="object-fit: contain;" width="100" />
                         </div>
                     </MudDrawerHeader>
-                    <MudNavMenu Color="Color.Primary">
+                    <MudNavMenu Color="Color.Secondary">
                         <MudNavLink Style="color: white" Href="/dashboard" Icon="@Icons.Material.Filled.Dashboard" IconColor="Color.Tertiary">Dashboard</MudNavLink>
 
                         <MudNavGroup Style="color: white" Title="Violations" Expanded="true">
@@ -113,3 +113,21 @@
         }
     }
 }
+
+<style>
+    .mud-avatar.mud-avatar-medium {
+        width: 36px;
+        height: 36px;
+        font-size: 1.25rem;
+    }
+
+    .mud-badge.mud-badge-top.right.mud-badge-overlap {
+        inset: auto auto calc(100% - 14px) calc(100% - 12px);
+    }
+
+    .mud-badge-root {
+        position: relative;
+        display: inline-block;
+        margin-top: 10px;
+    }
+</style>
