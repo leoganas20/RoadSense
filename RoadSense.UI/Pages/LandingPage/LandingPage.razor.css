@@ -297,7 +297,9 @@ ul {
         height: auto;
         margin: auto;
     }
-
+.service-gallery{
+    margin-bottom: 170px;
+}
 .landing-page .services {
     background-color: white;
     height: 400px;
@@ -341,8 +343,9 @@ ul {
 }
 
 .about-us {
-    margin-top: 130px;
+  
     margin-bottom: 130px;
+    padding-top: 130px;
 }
 #about-us .row {
     align-items: flex-start; /* Aligns content at the top */
