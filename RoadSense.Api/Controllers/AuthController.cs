@@ -52,7 +52,7 @@ namespace RoadSense.API.Controllers
                 return NotFound("User not found!");
             }
 
-            var token = _authService.GenerateJwtToken(existingUser.Email, existingUser.Role);
+            var token = _authService.GenerateJwtToken(existingUser.UserName, existingUser.Role);
 
             return Ok(new { Token = token });
         }
