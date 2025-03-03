@@ -91,9 +91,9 @@
                 {
                     <MudItem xs="12" sm="12" md="6" lg="4" Style="display: flex; justify-content: center;">
                         <div class="contact-btn">
-                            <MudCard Class="service-content" Elevation="2" Style="width: 340px; position: relative; padding: 10px; align-self: center;">
-                                <img src="@item.ImageSrc" width="100" Style="position: absolute; left: 20px; top: -50px" />
-                                <MudCardContent Style="height: 200px; margin-top: 55px;">
+                            <MudCard Class="service-content" Elevation="2" Style="width: 340px; position: relative; align-self: center;">
+                                <MudCardMedia Image="@item.ImageSrc" Height="200" />
+                                <MudCardContent Style="height: 200px; margin-top: 10px;">
                                     <MudText Class="fw-bolder" Typo="Typo.h5" Style="font-family: 'Poppins', sans-serif !important;">@item.Title</MudText>
                                     <MudText Class="mt-4" Typo="Typo.body2" Style="font-family: 'Poppins', sans-serif !important;">@item.Details</MudText>
                                 </MudCardContent>

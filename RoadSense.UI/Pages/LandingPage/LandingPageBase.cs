@@ -13,18 +13,21 @@ public class LandingPageBase : ComponentBase
             {
                 Title = "Real-Time Monitoring",
                 Details = "Dashboard displaying live data on overspeeding and honking violations.",
+                ImageSrc = "/images/Live_monitoring.png"
 
             },
             new Service
             {
                 Title = "Violation Tracking",
                 Details = "Records of detected violations, including speed, honking, date, time, and location.",
+                ImageSrc = "/images/Violation_track.png"
 
             },
             new Service
             {
                 Title = "Reports & Analytics",
                 Details = "Daily, weekly, and monthly violation reports. Graphs and statistics for trend analysis.",
+                ImageSrc = "/images/reportv.png"
 
             },
         };
