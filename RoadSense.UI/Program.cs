@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor;
 using MudBlazor.Services;
 using RoadSense.UI.Services.AuthProvider;
+using RoadSense.UI.Services.ManageUsers;
 using RoadSense.UI.Services.ManageViolationService;
 using RoadSense.UI.Services.User;
 using System.IdentityModel.Tokens.Jwt;
@@ -52,7 +53,7 @@ namespace RoadSense.UI
             // Add User Authentication Service
             builder.Services.AddScoped<UserAuthService>();
             builder.Services.AddScoped<ViolationService>();
-
+            builder.Services.AddScoped<UserService>();
             // Ensure all async tasks are awaited
             await builder.Build().RunAsync();
         }

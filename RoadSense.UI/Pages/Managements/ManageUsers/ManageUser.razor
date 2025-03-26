@@ -1,0 +1,51 @@
+﻿@page "/maintenace/manage/users"
+@inherits ManageUserBase
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+
+<div class="mt-10">
+    <MudToolBar Class="justify-space-between">
+        <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        <MudSpacer />
+        <MudFab OnClick="@(() => AddViolator(true))" DropShadow="false" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" Label="Add User" />
+    </MudToolBar>
+
+    <hr class="solid my-3">
+
+    <MudTable ServerData="ServerReload" Dense="true" Hover="true" @ref="table">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Manage User's</MudText>
+            <MudSpacer />
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh><MudTableSortLabel SortLabel="id_field" T="ManageUser">User ID</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortLabel="info_field" T="ManageUser">Full Name</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortLabel="plate_field" T="ManageUser">Plate Number</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortLabel="name_field" T="ManageUser">Role</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortLabel="status_field" T="ManageUser">Created</MudTableSortLabel></MudTh>
+            <MudTh>Action</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+           @*  <MudTd DataLabel="ID">@context.Id</MudTd> *@
+            <MudTd DataLabel="Info">@context.UserId</MudTd>
+            <MudTd DataLabel="Info">@(context.FirstName + " " + context.MiddleName + ". " + context.LastName + " " + context.Suffix)</MudTd>
+            <MudTd DataLabel="Plate">@context.PlateNumber</MudTd>
+            <MudTd DataLabel="Name">@context.Role</MudTd>
+            <MudTd DataLabel="Status">@context.Created.ToString("MMM dd, yyyy t")</MudTd>
+            <MudTd>
+                <MudIconButton OnClick="@(() => OpenModal(context))" Icon="@Icons.Material.Filled.Edit" Color="Color.Secondary" />
+            </MudTd>
+        </RowTemplate>
+        <NoRecordsContent>
+            <MudText>No matching records found</MudText>
+        </NoRecordsContent>
+        <LoadingContent>
+            <MudText>Loading...</MudText>
+        </LoadingContent>
+        <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+    </MudTable>
+
+</div>

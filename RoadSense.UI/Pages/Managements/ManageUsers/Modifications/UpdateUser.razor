@@ -1,0 +1,368 @@
+﻿@using RoadSense.UI.Models
+@using RoadSense.UI.Services.ManageUsers;
+@using RoadSense.UI.Services.User;
+
+@inject ISnackbar Snackbar
+@inject UserService UserService
+@inject IDialogService DialogService
+@inject UserAuthService UserAuthService
+
+<MudDialog>
+    <DialogContent>
+        <MudStepper @bind-ActiveIndex="_index" CenterLabels OnPreviewInteraction="OnPreviewInteraction" ShowResetButton="false">
+            <ChildContent>
+                <MudStep Title="Basic Information" SecondaryText="Enter personal details">
+                    <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+                        @*   <MudTextField Class="my-2" Label="User ID" Variant="Variant.Outlined" HelperText="Enter User ID"
+                          @bind-Value="UserModel.UserId" For="@(() => UserModel.UserId)" Required="true" />
+                          *@
+                        <MudTextField Class="my-2" Label="First Name" Variant="Variant.Outlined" HelperText="Enter first name"
+                        @bind-Value="UserModel.FirstName" For="@(() => UserModel.FirstName)" Required="true" />
+
+                        <MudTextField Class="my-2" Label="Middle Name" Variant="Variant.Outlined" HelperText="Enter middle name"
+                        @bind-Value="UserModel.MiddleName" For="@(() => UserModel.MiddleName)" />
+
+                        <MudTextField Class="my-2" Label="Last Name" Variant="Variant.Outlined" HelperText="Enter last name"
+                        @bind-Value="UserModel.LastName" For="@(() => UserModel.LastName)" Required="true" />
+
+                        <MudTextField Class="my-2" Label="Suffix" Variant="Variant.Outlined" HelperText="Enter suffix"
+                        @bind-Value="UserModel.Suffix" For="@(() => UserModel.Suffix)" />
+                    </MudForm>
+
+                </MudStep>
+
+                <MudStep Title="Contact Information" SecondaryText="Provide contact details">
+                    <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+                        <MudTextField Class="my-2" Label="Email" Variant="Variant.Outlined" HelperText="Enter email"
+                        @bind-Value="UserModel.Email" For="@(() => UserModel.Email)" Required="true" />
+
+                        <MudNumericField Class="my-2" Label="Phone Number" Variant="Variant.Outlined" HelperText="Enter phone number"
+                        @bind-Value="UserModel.PhoneNumber" For="@(() => UserModel.PhoneNumber)" Required="true" />
+                    </MudForm>
+
+                </MudStep>
+
+                <MudStep Title="Additional Details" SecondaryText="Other relevant information">
+                    <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+                        @*   <MudTextField Class="my-2" Label="Role" Variant="Variant.Outlined" HelperText="Enter user role"
+                        @bind-Value="UserModel.Role" For="@(() => UserModel.Role)" Required="true" /> *@
+                        <MudSelect T="string" @bind-Value="UserModel.Role" For="@(() => UserModel.Role)" Label="Enter user role" Variant="Variant.Outlined"  Clearable>
+                            <MudSelectItem Value="@("User")">User</MudSelectItem>
+                            <MudSelectItem Value="@("Super Admin")">Super Admin</MudSelectItem>
+                        </MudSelect>
+                        <MudTextField Class="my-2" Label="Plate Number" Variant="Variant.Outlined" HelperText="Enter plate number (if any)"
+                        @bind-Value="UserModel.PlateNumber" For="@(() => UserModel.PlateNumber)" />
+                    </MudForm>
+
+                </MudStep>
+                <MudStep Title="Security" SecondaryText="Set up user credentials">
+                    <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+                        <MudTextField Class="my-2" Label="Username" Variant="Variant.Outlined" HelperText="Enter username"
+                        @bind-Value="UserModel.UserName" For="@(() => UserModel.UserName)" Required="true" />
+
+                        <MudTextField Class="my-2" Label="Password" Variant="Variant.Outlined" Type="password" HelperText="Enter password" InputType="@PasswordInput"
+                        @bind-Value="UserModel.Password" For="@(() => UserModel.Password)" Required="true" 
+                        Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="ShowPassword" AdornmentAriaLabel="Show Password"/>
+                    </MudForm>
+
+                </MudStep>
+            </ChildContent>
+
+            <ActionContent Context="stepper">
+                @* <MudButton OnClick="@(() => stepper.ResetAsync())">Reset</MudButton> *@
+                @if (!_completed)
+                {
+                    <MudIconButton OnClick="@(() => stepper.PreviousStepAsync())" Color="Color.Primary" Disabled="@(_index <= 0)" >Back</MudIconButton>
+                    <MudSpacer />
+                    @if (stepper.Steps[_index].Skippable == true)
+                    {
+                        <MudIconButton OnClick="@(() => stepper.SkipCurrentStepAsync())" Icon="@stepper.SkipButtonIcon" Color="Color.Primary" />
+                    }
+                    @if (stepper.ActiveIndex == 3)
+                    {
+                        <MudButton Disabled="@_processing" OnClick="OnValidSubmit" Variant="Variant.Filled" Color="Color.Primary">
+                            @if (_processing)
+                            {
+                                <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                                <MudText Class="ms-2">Processing</MudText>
+                            }
+                            else
+                            {
+                                <MudText>@(IsEditMode ? "Save" : "Update")</MudText>
+                            }
+                        </MudButton>
+                        @*  <MudButton Class="mx-3" Variant="Variant.Filled" Color="Color.Primary" DropShadow="false" OnClick="@(()=> OnValidSubmit())">@(IsEditMode ? "Save" : "Update")</MudButton> *@
+                    }
+                    else
+                    {
+                      @*   @if (!IsEditMode)
+                        {
+                            <MudButton Variant="Variant.Filled" Color="Color.Error" DropShadow="false" OnClick="@(()=> OnDeleteRequest())">Delete</MudButton>
+                        } *@
+                        <MudIconButton OnClick="@(() => stepper.NextStepAsync())" Color="Color.Primary">Next</MudIconButton>
+                    }
+
+                }
+            </ActionContent>
+        </MudStepper>
+
+    </DialogContent>
+    @*   <DialogActions>
+        <MudButton Variant="Variant.Filled" Color="Color.Surface" DropShadow="false" OnClick="@(()=> Cancel())">Cancel</MudButton>
+
+        <MudSpacer />
+
+        @if (!IsEditMode)
+        {
+            <MudButton Variant="Variant.Filled" Color="Color.Error" DropShadow="false" OnClick="@(()=> OnDeleteRequest())">Delete</MudButton>
+        }
+
+        <MudButton Class="mx-3" Variant="Variant.Filled" Color="Color.Primary" DropShadow="false" OnClick="@(()=> OnValidSubmit())">@(IsEditMode ? "Save" :  "Update")</MudButton>
+    </DialogActions> *@
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public UserModel UserModel { get; set; } = new UserModel();
+
+    [Parameter]
+    public bool IsEditMode { get; set; }
+
+    protected MudForm form;
+    protected string[] errors = { };
+    protected bool success = false;
+    protected bool _processing = false;
+
+    private bool _isEditDialogOpen = false;
+    private bool _visibleDelete = false;
+    private string NameToDelete { get; set; }
+    private int _index;
+    private bool _completed;
+
+    bool isShow;
+    InputType PasswordInput = InputType.Password;
+    string PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+    void ShowPassword()
+    {
+        @if (isShow)
+        {
+            isShow = false;
+            PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+            PasswordInput = InputType.Password;
+        }
+        else
+        {
+            isShow = true;
+            PasswordInputIcon = Icons.Material.Filled.Visibility;
+            PasswordInput = InputType.Text;
+        }
+    }
+    private async Task OnValidSubmit()
+    {
+        await form.Validate();
+
+        if (!IsEditMode && form.IsValid)
+        {
+            await Update();
+            MudDialog.Close();
+        }
+        else
+        {
+            await Add();
+            MudDialog.Close();
+        }
+    }
+
+    private async Task OnDeleteRequest()
+    {
+        if (!string.IsNullOrEmpty(UserModel.Id))
+        {
+            var response = await UserService.DeleteAsync(UserModel.Id);
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add("User deleted successfully!", Severity.Success);
+                _visibleDelete = false;
+                MudDialog.Close();
+            }
+            else
+            {
+                Snackbar.Add("Failed to delete user", Severity.Error);
+            }
+        }
+
+        MudDialog.Close();
+    }
+
+    private async Task Update()
+    {
+        _processing = true;
+
+        if (!string.IsNullOrEmpty(UserModel.Id))
+        {
+            var response = await UserService.UpdateAsync(UserModel.Id, UserModel);
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add("User updated successfully!", Severity.Success);
+                _isEditDialogOpen = false;
+            }
+            else
+            {
+                Snackbar.Add("Failed to update user", Severity.Error);
+            }
+        }
+
+        _processing = false;
+    }
+
+    private async Task Add()
+    {
+        _processing = true;
+
+        string generatedUserId = GenerateUserId(UserModel.FirstName, UserModel.LastName, UserModel.MiddleName, UserModel.Suffix);
+
+        var reg = new UserLogin
+        {
+            UserId = generatedUserId,
+            UserName = UserModel.UserName ?? "unknown",
+            Password = UserModel.Password ?? "unknown",
+            Email = UserModel.Email ?? "unknown",
+            PhoneNumber = UserModel.PhoneNumber ?? "unknown",
+            Role = UserModel.Role ?? "unknown"
+        };
+
+        var regresponse = await UserAuthService.RegisterAsync(reg);
+
+        if (regresponse.IsSuccessStatusCode)
+        {
+            UserModel.UserId = reg.UserId;
+
+            var response = await UserService.AddAsync(UserModel);
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add("User added successfully!", Severity.Success);
+                _isEditDialogOpen = false;
+                MudDialog.Close();
+            }
+            else
+            {
+                Snackbar.Add("Failed to add user", Severity.Error);
+            }
+        }
+        else
+        {
+            var errorMessage = await regresponse.Content.ReadAsStringAsync();
+            Snackbar.Add(errorMessage, Severity.Error);
+        }
+
+        _processing = false;
+    }
+
+    private void Cancel() => MudDialog.Cancel();
+
+
+    private bool _step1Complete;
+    private bool _step2Complete;
+    private bool _step4Complete;
+
+    private async Task OnPreviewInteraction(StepperInteractionEventArgs arg)
+    {
+        
+
+        if (arg.Action == StepAction.Complete)
+        {
+            await ControlStepCompletion(arg);
+        }
+        else if (arg.Action == StepAction.Activate)
+        {
+            await ControlStepNavigation(arg);
+        }
+    }
+
+    private async Task ControlStepCompletion(StepperInteractionEventArgs arg)
+    {
+        switch (arg.StepIndex)
+        {
+            case 0:
+                await form.Validate();
+                _step1Complete = !string.IsNullOrWhiteSpace(UserModel.FirstName) &&
+                                 !string.IsNullOrWhiteSpace(UserModel.LastName);
+
+                if (!_step1Complete)
+                {
+                    await DialogService.ShowMessageBox("Error", "Please complete all required fields in Step 1.");
+                    arg.Cancel = true;
+                }
+                break;
+
+            case 1:
+                await form.Validate();
+                _step2Complete = !string.IsNullOrWhiteSpace(UserModel.Email) &&
+                                 !string.IsNullOrWhiteSpace(UserModel.PhoneNumber);
+
+                if (!_step2Complete)
+                {
+                    await DialogService.ShowMessageBox("Error", "Please complete all required fields in Step 2.");
+                    arg.Cancel = true;
+                }
+                break;
+
+            case 3:
+                await form.Validate();
+                _step4Complete = !string.IsNullOrWhiteSpace(UserModel.Password) && !string.IsNullOrWhiteSpace(UserModel.UserName);
+
+                if (!_step4Complete)
+                {
+                    await DialogService.ShowMessageBox("Error", "Please enter a password in Step 4.");
+                    arg.Cancel = true;
+                }
+                break;
+        }
+    }
+
+    private async Task ControlStepNavigation(StepperInteractionEventArgs arg)
+    {
+        switch (arg.StepIndex)
+        {
+            case 1:
+                if (!_step1Complete)
+                {
+                    await DialogService.ShowMessageBox("Error", "Finish Step 1 first.");
+                    arg.Cancel = true;
+                }
+                break;
+
+            case 2:
+                if (!_step1Complete || !_step2Complete)
+                {
+                    await DialogService.ShowMessageBox("Error", "Finish Step 1 and Step 2 first.");
+                    arg.Cancel = true;
+                }
+                break;
+
+            case 3:
+                if (!_step1Complete || !_step2Complete)
+                {
+                    await DialogService.ShowMessageBox("Error", "Finish all previous steps before proceeding.");
+                    arg.Cancel = true;
+                }
+                break;
+        }
+    }
+
+    private string GenerateUserId(string firstName, string lastName, string middleName, string suffix)
+    {
+        firstName = string.IsNullOrWhiteSpace(firstName) ? "" : firstName.Substring(0, 1).ToUpper();
+        lastName = string.IsNullOrWhiteSpace(lastName) ? "" : lastName.Substring(0, Math.Min(3, lastName.Length)).ToUpper();
+        middleName = string.IsNullOrWhiteSpace(middleName) ? "" : middleName.Substring(0, 1).ToUpper();
+        suffix = string.IsNullOrWhiteSpace(suffix) ? "" : suffix.ToUpper();
+
+        Random random = new Random();
+        int randomNumber = random.Next(1000, 9999);
+
+        // Construct UserId
+        return $"{firstName}{middleName}{lastName}{suffix}{randomNumber}";
+    }
+}
