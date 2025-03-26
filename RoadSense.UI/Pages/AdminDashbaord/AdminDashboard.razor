@@ -36,6 +36,52 @@
         </MudItem>
     }
     
+    <hr class="solid my-3">
+
+    <MudItem xs="12" sm="6" lg="6">
+        <MudCard>
+            <MudCardHeader>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.h6">Add title</MudText>
+                </CardHeaderContent>
+                @*   <CardHeaderActions>
+                        <MudIconButton Icon="@Icons.Material.Filled.Settings" Color="Color.Default" />
+                    </CardHeaderActions> *@
+            </MudCardHeader>
+            <MudCardContent>
+
+                <div class="d-flex justify-content-center p-3">
+                    <MudChart ChartType="ChartType.Pie" InputData="@data" @bind-SelectedIndex="Index" InputLabels="@labels" Width="300px" Height="300px" />
+                </div>
+            </MudCardContent>
+            <MudCardActions>
+               @*  <MudButton Variant="Variant.Text" Color="Color.Primary">View</MudButton> *@
+            </MudCardActions>
+        </MudCard>
+    </MudItem>
+
+    <MudItem xs="12" sm="6" lg="6">
+        <MudCard>
+            <MudCardHeader>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.h6">Add title</MudText>
+                </CardHeaderContent>
+                @*   <CardHeaderActions>
+                        <MudIconButton Icon="@Icons.Material.Filled.Settings" Color="Color.Default" />
+                    </CardHeaderActions> *@
+            </MudCardHeader>
+            <MudCardContent>
+
+                <div class="d-flex justify-content-center p-3">
+                    <MudChart ChartType="ChartType.Bar" ChartSeries="@_series" @bind-SelectedIndex="_index" XAxisLabels="@_xAxisLabels" Width="750px" Height="300px"></MudChart>
+
+                </div>
+            </MudCardContent>
+            <MudCardActions>
+             @*    <MudButton Variant="Variant.Text" Color="Color.Primary">View</MudButton> *@
+            </MudCardActions>
+        </MudCard>
+    </MudItem>
 </MudGrid>
 
 
@@ -72,4 +118,54 @@
         public int Total { get; set; }
         public string Icon { get; set; }
     }
+
+
+    private int Index = -1; //default value cannot be 0 -> first selectedindex is 0.
+    int dataSize = 4;
+    double[] data = { 77, 25, 20, 5 };
+    string[] labels = { "Uranium", "Plutonium", "Thorium", "Caesium", "Technetium", "Promethium",
+                        "Polonium", "Astatine", "Radon", "Francium", "Radium", "Actinium", "Protactinium",
+                        "Neptunium", "Americium", "Curium", "Berkelium", "Californium", "Einsteinium", "Mudblaznium" };
+
+    Random random = new Random();
+
+    void RandomizeData()
+    {
+        var new_data = new double[dataSize];
+        for (int i = 0; i < new_data.Length; i++)
+            new_data[i] = random.NextDouble() * 100;
+        data = new_data;
+        StateHasChanged();
+    }
+
+    void AddDataSize()
+    {
+        if (dataSize < 20)
+        {
+            dataSize = dataSize + 1;
+            RandomizeData();
+        }
+    }
+
+    void RemoveDataSize()
+    {
+        if (dataSize > 0)
+        {
+            dataSize = dataSize - 1;
+            RandomizeData();
+        }
+    }
+
+
+    private int _index = -1; //default value cannot be 0 -> first selectedindex is 0.
+    private string _width = "650px";
+    private string _height = "350px";
+
+    private List<ChartSeries> _series = new List<ChartSeries>()
+    {
+        new ChartSeries() { Name = "United States", Data = new double[] { 40, 20, 25, 27, 46, 60, 48, 80, 15 } },
+        new ChartSeries() { Name = "Germany", Data = new double[] { 19, 24, 35, 13, 28, 15, 13, 16, 31 } },
+        new ChartSeries() { Name = "Sweden", Data = new double[] { 8, 6, 11, 13, 4, 16, 10, 16, 18 } },
+    };
+    private string[] _xAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
 }

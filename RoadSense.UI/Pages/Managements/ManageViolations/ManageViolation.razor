@@ -1,0 +1,53 @@
+﻿@page "/maintenace/manage/violations"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+@inherits ManageViolationBase
+
+<div class="mt-10">
+    <MudToolBar Class="justify-space-between" >
+        <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        <MudSpacer />
+        <MudFab OnClick="@(() => AddViolator(true))" DropShadow="false" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" Label="Add Violator" />
+    </MudToolBar>
+
+    <hr class="solid my-3">
+
+    <MudTable ServerData="ServerReload" Dense="true" Hover="true" @ref="table">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Manage Violations</MudText>
+            <MudSpacer />
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh><MudTableSortLabel SortLabel="id_field" T="ManageViolation">ID</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortLabel="info_field" T="ManageViolation">Info</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortLabel="plate_field" T="ManageViolation">Plate Number</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortLabel="name_field" T="ManageViolation">Name</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortLabel="type_field" T="ManageViolation">Type</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortLabel="status_field" T="ManageViolation">Status</MudTableSortLabel></MudTh>
+            <MudTh>Action</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="ID">@context.Id</MudTd>
+            <MudTd DataLabel="Info">@context.Info</MudTd>
+            <MudTd DataLabel="Plate">@context.PlateNumber</MudTd>
+            <MudTd DataLabel="Name">@context.Name</MudTd>
+            <MudTd DataLabel="Type">@context.Type</MudTd>
+            <MudTd DataLabel="Status">@context.Status</MudTd>
+            <MudTd>
+                <MudIconButton OnClick="@(() => OpenModal(context))" Icon="@Icons.Material.Filled.Edit" Color="Color.Secondary" />
+            </MudTd>
+        </RowTemplate>
+        <NoRecordsContent>
+            <MudText>No matching records found</MudText>
+        </NoRecordsContent>
+        <LoadingContent>
+            <MudText>Loading...</MudText>
+        </LoadingContent>
+        <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+    </MudTable>
+
+</div>
+ 

@@ -1,0 +1,181 @@
+﻿@using RoadSense.UI.Models
+@using RoadSense.UI.Services.ManageViolationService;
+@inject ISnackbar Snackbar
+@inject ViolationService ViolationService
+
+<MudDialog Style="width: 700px">
+    <DialogContent>
+        <MudGrid>
+            <MudItem xs="12">
+                <MudPaper Class="pa-4" Elevation="0">
+                    <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+                        <MudTextField Class="my-2" Label="Info" Variant="Variant.Outlined" HelperText="Enter violation details"
+                        @bind-Value="ViolationModel.Info"
+                        For="@(() => ViolationModel.Info)"
+                        Required="true" />
+
+                        <MudTextField Class="my-2" Label="Plate Number" Variant="Variant.Outlined" HelperText="Max. 10 characters"
+                        @bind-Value="ViolationModel.PlateNumber"
+                        For="@(() => ViolationModel.PlateNumber)"
+                        Required="true" />
+
+                        <MudTextField Class="my-2" Label="Name" Variant="Variant.Outlined" HelperText="Enter violator's name"
+                        @bind-Value="ViolationModel.Name"
+                        For="@(() => ViolationModel.Name)"
+                        Required="true" />
+
+                        <MudTextField Class="my-2" Label="Type" Variant="Variant.Outlined" HelperText="Enter violation type"
+                        @bind-Value="ViolationModel.Type"
+                        For="@(() => ViolationModel.Type)"
+                        Required="true" />
+
+                        <MudTextField Class="my-2" Label="Status" Variant="Variant.Outlined" HelperText="Enter violation status"
+                        @bind-Value="ViolationModel.Status"
+                        For="@(() => ViolationModel.Status)"
+                        Required="true" />
+
+                    </MudForm>
+                </MudPaper>
+
+            </MudItem>
+
+        </MudGrid>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" Color="Color.Surface" DropShadow="false" OnClick="@(()=> Cancel())">Cancel</MudButton>
+        
+        <MudSpacer />
+
+        @if (!IsEditMode)
+        {
+            <MudButton Variant="Variant.Filled" Color="Color.Error" DropShadow="false" OnClick="@(()=> OnDeleteRequest())">Delete</MudButton>
+        }
+        
+        <MudButton Class="mx-3" Variant="Variant.Filled" Color="Color.Primary" DropShadow="false" OnClick="@(()=> OnValidSubmit())">@(IsEditMode ? "Save" :  "Update")</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@* 
+<MudDialog @bind-Visible="_visibleDelete">
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-3" /> Edit rating
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <p>@($"Are you sure you want to delete {NameToDelete} ")?</p>
+
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" Color="Color.Surface" OnClick="@(() => _visibleDelete = false)" Class="px-10">Cancel</MudButton>
+        <MudSpacer />
+        <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="OnDeleteRequest" Class="px-10">Yes</MudButton>
+    </DialogActions>
+</MudDialog> *@
+
+@code {
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public ManageViolationModel ViolationModel { get; set; } = new ManageViolationModel();
+
+    [Parameter]
+    public bool IsEditMode { get; set; }
+
+    protected MudForm form;
+    protected string[] errors = { };
+
+    protected bool success = false;
+    private bool _isEditDialogOpen = false;
+    private ManageViolationModel _editViolation = new();
+
+    private bool _visibleDelete = false;
+    private string NameToDelete { get; set; }
+
+    private async Task OnValidSubmit()
+    {
+        await form.Validate();
+
+        if (!IsEditMode && form.IsValid)
+        {
+            await Update();
+            MudDialog.Close();
+        }
+        else
+        {
+            await Add();
+            MudDialog.Close();
+        }
+    }
+
+    private void OnDelete(ManageViolationModel name)
+    {
+        NameToDelete = name.Name;
+    }
+
+    private async Task OnDeleteRequest()
+    {
+        if (!string.IsNullOrEmpty(ViolationModel.Id))
+        {
+            var response = await ViolationService.DeleteAsync(ViolationModel.Id);
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add("Violation deleted successfully!", Severity.Success);
+                _visibleDelete = false;
+                MudDialog.Close();
+            }
+            else
+            {
+                Snackbar.Add("Failed to deleted violation", Severity.Error);
+            }
+        }
+
+        MudDialog.Close();
+    }
+
+    
+    private async Task Update()
+    {
+        if (!string.IsNullOrEmpty(ViolationModel.Id))
+        {
+            var response = await ViolationService.UpdateAsync(ViolationModel.Id, ViolationModel);
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add("Violation updated successfully!", Severity.Success);
+                _isEditDialogOpen = false;
+            }
+            else
+            {
+                Snackbar.Add("Failed to update violation", Severity.Error);
+            }
+        }
+    }
+
+    private async Task Add()
+    {
+        var response = await ViolationService.AddAsync(ViolationModel);
+        if (response.IsSuccessStatusCode)
+        {
+            Snackbar.Add("Violator added successfully!", Severity.Success);
+            _isEditDialogOpen = false;
+        }
+        else
+        {
+            Snackbar.Add("Failed to add Violator", Severity.Error);
+        }
+    }
+
+    private void OpenEditDialog(ManageViolationModel violation)
+    {
+        _editViolation = violation;
+        _isEditDialogOpen = true;
+    }
+
+    private void CloseDialog()
+    {
+        _isEditDialogOpen = false;
+    }
+
+    private void Cancel() => MudDialog.Cancel();
+} 

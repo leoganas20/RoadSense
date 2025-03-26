@@ -12,5 +12,6 @@ namespace RoadSense.Api
 
         // Define your DbSet properties here (representing tables)
         public DbSet<LoginModel> Users { get; set; }
+        public DbSet<ManageViolation> Violations { get; set; }
     }
 }
